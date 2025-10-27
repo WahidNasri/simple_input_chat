@@ -79,6 +79,9 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   fontSize: 16,
                 ),
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 12,
