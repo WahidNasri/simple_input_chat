@@ -15,7 +15,8 @@ class ChatInputWidget extends StatefulWidget {
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onCameraPressed;
   final Duration? maxRecordingDuration;
-  final Function() onIsMicUsed;
+  final Function() onMicUsed;
+  final TextEditingController? controller;
 
   const ChatInputWidget({
     super.key,
@@ -25,7 +26,8 @@ class ChatInputWidget extends StatefulWidget {
     this.onAttachmentPressed,
     this.onCameraPressed,
     this.maxRecordingDuration,
-    required this.onIsMicUsed,
+    required this.onMicUsed,
+    this.controller,
   });
 
   @override
@@ -92,7 +94,7 @@ class _ChatInputWidgetState extends State<ChatInputWidget> {
             onCancel: _handleVoiceCancel,
             onSend: _handleVoiceSend,
             onIsMicUsed: (){
-              widget.onIsMicUsed();
+              widget.onMicUsed();
               _handleVoiceCancel();
             },
             maxDuration: widget.maxRecordingDuration,
@@ -110,6 +112,7 @@ class _ChatInputWidgetState extends State<ChatInputWidget> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextInputWidget(
+              controller: widget.controller,
               onSendPressed: _handleSendText,
               onVoicePressed: _handleVoicePressed,
               onAttachmentPressed: _handleAttachmentPressed,
