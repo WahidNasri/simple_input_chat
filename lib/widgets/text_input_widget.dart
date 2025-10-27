@@ -50,6 +50,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: _textController.text.trim().isNotEmpty ? Theme.of(context).primaryColor : Colors.grey,
           width: 1,
