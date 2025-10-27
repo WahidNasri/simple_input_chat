@@ -14,6 +14,8 @@ class ChatInputWidget extends StatefulWidget {
   final VoidCallback? onEmojiPressed;
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onCameraPressed;
+  final Duration? maxRecordingDuration;
+  final Function() onIsMicUsed;
 
   const ChatInputWidget({
     super.key,
@@ -22,6 +24,8 @@ class ChatInputWidget extends StatefulWidget {
     this.onEmojiPressed,
     this.onAttachmentPressed,
     this.onCameraPressed,
+    this.maxRecordingDuration,
+    required this.onIsMicUsed,
   });
 
   @override
@@ -87,6 +91,16 @@ class _ChatInputWidgetState extends State<ChatInputWidget> {
           VoiceRecordingWidget(
             onCancel: _handleVoiceCancel,
             onSend: _handleVoiceSend,
+            onIsMicUsed: (){
+              widget.onIsMicUsed();
+              _handleVoiceCancel();
+            },
+            maxDuration: widget.maxRecordingDuration,
+            onPlayVoiceError: (error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Playback error: $error')),
+              );
+            },
           ),
 
 

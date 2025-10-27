@@ -99,6 +99,9 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
               onEmojiPressed: _handleEmojiPressed,
               onAttachmentPressed: _handleAttachmentPressed,
               onCameraPressed: _handleCameraPressed,
+              onIsMicUsed: (){
+                print(">>>>>>>>>>>>> Mic used");
+              },
             ),
           ],
         ),

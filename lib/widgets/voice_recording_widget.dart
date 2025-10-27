@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mic_info/mic_info.dart';
 import 'package:waved_audio_player/waved_audio_player.dart';
 import '../services/audio_recording_service.dart';
 
@@ -8,12 +10,16 @@ class VoiceRecordingWidget extends StatefulWidget {
   final VoidCallback onCancel;
   final Function(String?) onSend;
   final Function(String)? onPlayVoiceError;
+  final Function() onIsMicUsed;
+  final Duration? maxDuration;
 
   const VoiceRecordingWidget({
     super.key,
     required this.onCancel,
     required this.onSend,
     this.onPlayVoiceError,
+    required this.onIsMicUsed,
+    this.maxDuration = const Duration(minutes: 1),
   });
 
   @override
@@ -45,12 +51,21 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
   }
 
   Future<void> _startRecording() async {
+    if(await _isMicUsed()){
+      widget.onIsMicUsed();
+      return;
+    }
     final success = await _audioService.startRecording();
     if (success) {
       _durationSubscription = _audioService.durationStream?.listen((duration) {
         setState(() {
           _recordingDuration = duration;
         });
+        
+        // Check if max duration is reached
+        if (widget.maxDuration != null && duration >= widget.maxDuration!) {
+          _handleStopRecording();
+        }
       });
 
       _audioService.waveformStream?.listen((waveform) {
@@ -68,6 +83,15 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
     final minutes = twoDigits(duration.inMinutes);
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$minutes:$seconds';
+  }
+
+  bool _isNearMaxDuration() {
+    if(widget.maxDuration == null){
+      return false;
+    }
+    // Show warning when within 10 seconds of max duration
+    final warningThreshold = widget.maxDuration! - const Duration(seconds: 10);
+    return _recordingDuration >= warningThreshold;
   }
 
   @override
@@ -148,8 +172,10 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                 if(!isRecordingPaused)
                   Text(
                     _formatDuration(_recordingDuration),
-                    style:  TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                    style: TextStyle(
+                      color: _isNearMaxDuration() 
+                          ? Colors.orange 
+                          : Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -188,10 +214,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                 // Pause/Resume/Play button
                 if(!isRecordingPaused)
                   GestureDetector(
-                    onTap: () async {
-                      _recordingPath = await _audioService.stopRecording();
-                      setState(() {});
-                    },
+                    onTap: _handleStopRecording,
                     child: Container(
                       width: 60,
                       height: 60,
@@ -231,6 +254,16 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
       ),
     );
   }
+
+  void _handleStopRecording() async{
+
+      _recordingPath = await _audioService.stopRecording();
+      setState(() {});
+  }
+  Future<bool> _isMicUsed() async{
+    final activeMics = await MicInfo.getActiveMicrophones();
+    return Platform.isIOS && activeMics.length > 1 || Platform.isAndroid && activeMics.isNotEmpty;
+  }
 }
 
 class WaveformPainter extends CustomPainter {
@@ -264,6 +297,7 @@ class WaveformPainter extends CustomPainter {
       );
     }
   }
+
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
