@@ -112,6 +112,7 @@ class _ChatInputWidgetState extends State<ChatInputWidget> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextInputWidget(
+              key: ValueKey("ChatInputState.textInput"),
               controller: widget.controller,
               onSendPressed: _handleSendText,
               onVoicePressed: _handleVoicePressed,
