@@ -37,7 +37,9 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   @override
   void dispose() {
-    _textController.dispose();
+    if(widget.controller == null) {
+      _textController.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }
