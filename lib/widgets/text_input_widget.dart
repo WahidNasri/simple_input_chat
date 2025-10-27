@@ -73,6 +73,8 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 fontSize: 16,
               ),
               decoration: const InputDecoration(
+                filled: false,
+                fillColor: Colors.transparent,
                 hintText: 'Message',
                 hintStyle: TextStyle(
                   color: Color(0xFF9E9E9E),
