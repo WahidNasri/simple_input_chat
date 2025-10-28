@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/chat_input_widget.dart';
+import 'widgets/simple_chat_input.dart';
 
 void main() {
   runApp(const MyApp());
@@ -93,7 +93,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
             ),
             
             // Chat input widget
-            ChatInputWidget(
+            SimpleChatInput(
               onTextMessage: _handleTextMessage,
               onVoiceMessage: _handleVoiceMessage,
               onEmojiPressed: _handleEmojiPressed,

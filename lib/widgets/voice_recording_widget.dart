@@ -51,7 +51,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
   }
 
   Future<void> _startRecording() async {
-    if(await _isMicUsed()){
+    if (await _isMicUsed()) {
       widget.onIsMicUsed();
       return;
     }
@@ -61,7 +61,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
         setState(() {
           _recordingDuration = duration;
         });
-        
+
         // Check if max duration is reached
         if (widget.maxDuration != null && duration >= widget.maxDuration!) {
           _handleStopRecording();
@@ -69,10 +69,10 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
       });
 
       _audioService.waveformStream?.listen((waveform) {
-        if(!_audioService.isPaused) {
+        if (!_audioService.isPaused) {
           setState(() {
-          _waveformData = waveform;
-        });
+            _waveformData = waveform;
+          });
         }
       });
     }
@@ -86,7 +86,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
   }
 
   bool _isNearMaxDuration() {
-    if(widget.maxDuration == null){
+    if (widget.maxDuration == null) {
       return false;
     }
     // Show warning when within 10 seconds of max duration
@@ -96,16 +96,18 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isRecordingPaused = _audioService.isPaused || !_audioService.isRecording;
+    final isRecordingPaused =
+        _audioService.isPaused || !_audioService.isRecording;
 
     return Container(
-      margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2), // Shadow color and opacity
+            color: Colors.grey.withValues(
+              alpha: 0.2,
+            ), // Shadow color and opacity
             spreadRadius: 1, // How far the shadow spreads
             blurRadius: 7, // How blurry the shadow is
             offset: const Offset(1, 2), // Offset of the shadow (x, y)
@@ -120,35 +122,35 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if(!isRecordingPaused)
-                // Waveform visualization with progress
-                Expanded(
-                  child: SizedBox(
-                    height: 30,
-                    //width: 100,
-                    child: Stack(
-                      children: [
-                        GestureDetector(
-                          key: _waveformKey,
-                          child: CustomPaint(
-                            painter: WaveformPainter(
-                              _waveformData,
-                              color: Theme.of(context).primaryColor
+                if (!isRecordingPaused)
+                  // Waveform visualization with progress
+                  Expanded(
+                    child: SizedBox(
+                      height: 30,
+                      //width: 100,
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            key: _waveformKey,
+                            child: CustomPaint(
+                              painter: WaveformPainter(
+                                _waveformData,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              size: Size.infinite,
                             ),
-                            size: Size.infinite,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                if(isRecordingPaused && _recordingPath != null)
+                if (isRecordingPaused && _recordingPath != null)
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surfaceDim,
-                      borderRadius: BorderRadius.circular(20)
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: WavedAudioPlayer(
                       source: DeviceFileSource(_recordingPath!),
@@ -165,82 +167,76 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                       },
                     ),
                   ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 // Timer
-                if(!isRecordingPaused)
+                if (!isRecordingPaused)
                   Text(
                     _formatDuration(_recordingDuration),
                     style: TextStyle(
-                      color: _isNearMaxDuration() 
-                          ? Colors.orange 
+                      color: _isNearMaxDuration()
+                          ? Colors.orange
                           : Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                
-                const SizedBox(width: 8),
 
+                const SizedBox(width: 8),
               ],
             ),
           ),
-          
           // Control buttons
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(2),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Cancel button
-                GestureDetector(
-                  onTap: widget.onCancel,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF424242),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.white,
-                      size: 24,
+                IconButton(
+                  onPressed: widget.onCancel,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ), // Set border radius to 0 for a sharp rectangle
                     ),
                   ),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-
                 // Pause/Resume/Play button
-                if(!isRecordingPaused)
-                  GestureDetector(
-                    onTap: _handleStopRecording,
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.pause,
-                        color: Colors.white,
-                        size: 28,
+                if (!isRecordingPaused)
+                  IconButton(
+                    onPressed: _handleStopRecording,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          10,
+                        ), // Set border radius to 0 for a sharp rectangle
                       ),
                     ),
+                    icon: Icon(Icons.pause, color: Colors.white, size: 28),
                   ),
 
                 // Send button
                 GestureDetector(
                   onTap: () => widget.onSend(_recordingPath),
                   child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration:  BoxDecoration(
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      shape: BoxShape.circle,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child:  Icon(
+                    child: Icon(
                       Icons.send,
                       color: Theme.of(context).colorScheme.onPrimary,
                       size: 24,
@@ -255,14 +251,15 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
     );
   }
 
-  void _handleStopRecording() async{
-
-      _recordingPath = await _audioService.stopRecording();
-      setState(() {});
+  void _handleStopRecording() async {
+    _recordingPath = await _audioService.stopRecording();
+    setState(() {});
   }
-  Future<bool> _isMicUsed() async{
+
+  Future<bool> _isMicUsed() async {
     final activeMics = await MicInfo.getActiveMicrophones();
-    return Platform.isIOS && activeMics.length > 1 || Platform.isAndroid && activeMics.isNotEmpty;
+    return Platform.isIOS && activeMics.length > 1 ||
+        Platform.isAndroid && activeMics.isNotEmpty;
   }
 }
 
@@ -270,8 +267,7 @@ class WaveformPainter extends CustomPainter {
   final List<double> waveformData;
   final Color? color;
 
-  WaveformPainter(
-    this.waveformData, {this.color});
+  WaveformPainter(this.waveformData, {this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -287,7 +283,10 @@ class WaveformPainter extends CustomPainter {
     final barWidth = size.width / waveformData.length;
 
     for (int i = 0; i < waveformData.length; i++) {
-      final barHeight = (waveformData[i].abs() * centerY * 0.8).clamp(2.0, centerY * 0.8);
+      final barHeight = (waveformData[i].abs() * centerY * 0.8).clamp(
+        2.0,
+        centerY * 0.8,
+      );
       final x = i * barWidth + barWidth / 2;
 
       canvas.drawLine(
@@ -298,10 +297,8 @@ class WaveformPainter extends CustomPainter {
     }
   }
 
-
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
 }
-

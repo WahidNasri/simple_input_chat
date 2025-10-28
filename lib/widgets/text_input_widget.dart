@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class TextInputWidget extends StatefulWidget {
@@ -9,6 +8,8 @@ class TextInputWidget extends StatefulWidget {
   final VoidCallback onVoicePressed;
   final VoidCallback onAttachmentPressed;
   final VoidCallback onCameraPressed;
+  final String? hint;
+  final Color? fillColor;
 
   const TextInputWidget({
     super.key,
@@ -19,6 +20,8 @@ class TextInputWidget extends StatefulWidget {
     required this.onVoicePressed,
     required this.onAttachmentPressed,
     required this.onCameraPressed,
+    this.hint,
+    this.fillColor,
   });
 
   @override
@@ -32,12 +35,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   @override
   void initState() {
     super.initState();
-    _textController = widget.controller ?? TextEditingController(text: widget.initialText);
+    _textController =
+        widget.controller ?? TextEditingController(text: widget.initialText);
   }
 
   @override
   void dispose() {
-    if(widget.controller == null) {
+    if (widget.controller == null) {
       _textController.dispose();
     }
     _focusNode.dispose();
@@ -46,97 +50,109 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(
-          color: _textController.text.trim().isNotEmpty ? Theme.of(context).primaryColor : Colors.grey,
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Text input field
-          Expanded(
-            child: TextField(
-              controller: _textController,
-              focusNode: _focusNode,
-              onChanged: (v){
-                widget.onTextChanged?.call(v);
-                setState(() {
+    return Row(
+      spacing: 5,
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _textController,
+            focusNode: _focusNode,
+            onChanged: (v) {
+              widget.onTextChanged?.call(v);
+              setState(() {});
+            },
+            style: const TextStyle(fontSize: 16),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: widget.fillColor ?? Theme.of(context).colorScheme.surface,
+              hintText: widget.hint,
+              hintStyle: const TextStyle(
+                color: Color(0xFF9E9E9E),
+                fontSize: 15,
+              ),
+              border: InputBorder.none,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor
+                ),
+              ),
+              errorBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Attachment button
+                  IconButton(
+                    onPressed: widget.onAttachmentPressed,
+                    icon: const Icon(
+                      Icons.attach_file,
+                      color: Color(0xFF9E9E9E),
+                      size: 24,
+                    ),
+                  ),
 
-                });
-              },
-              style: const TextStyle(
-                fontSize: 16,
+                  // Camera button
+                  IconButton(
+                    onPressed: widget.onCameraPressed,
+                    icon: const Icon(
+                      Icons.camera_alt_outlined,
+                      color: Color(0xFF9E9E9E),
+                      size: 24,
+                    ),
+                  ),
+                ],
               ),
-              decoration: const InputDecoration(
-                filled: false,
-                fillColor: Colors.transparent,
-                hintText: 'Message',
-                hintStyle: TextStyle(
-                  color: Color(0xFF9E9E9E),
-                  fontSize: 16,
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
-                ),
-              ),
-              maxLines: null,
-              textCapitalization: TextCapitalization.sentences,
             ),
+            maxLines: null,
+            textCapitalization: TextCapitalization.sentences,
           ),
-          
-          // Attachment button
-            IconButton(
-             onPressed: widget.onAttachmentPressed,
-              icon: const Icon(
-                Icons.attach_file,
-                color: Color(0xFF9E9E9E),
-                size: 24,
-              ),
+        ),
+        // Send or Voice button
+        GestureDetector(
+          onTap: _textController.text.trim().isNotEmpty
+              ? () {
+                  widget.onSendPressed(_textController.text.trim());
+                  _textController.clear();
+                }
+              : widget.onVoicePressed,
+          child: Container(
+            width: 48,
+            height: 48,
+            margin: EdgeInsets.only(right: 2),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10),
             ),
-          
-          // Camera button
-          IconButton(
-
-              onPressed: widget.onCameraPressed,
-              icon: const Icon(
-                Icons.camera_alt_outlined,
-                color: Color(0xFF9E9E9E),
-                size: 24,
-              ),
-            ),
-          
-
-          // Send or Voice button
-          GestureDetector(
-            onTap: _textController.text.trim().isNotEmpty ? (){
-              widget.onSendPressed(_textController.text.trim());
-            _textController.clear();} : widget.onVoicePressed,
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                shape: BoxShape.circle,
+            child: AnimatedSwitcher(
+              duration: const Duration(
+                  milliseconds: 200), // Adjust duration as needed
+              transitionBuilder: (child, anim) => RotationTransition(
+                turns: child.key == ValueKey('send')
+                    ? Tween<double>(begin: 1, end: 1).animate(anim)
+                    : Tween<double>(begin: 0.75, end: 1).animate(anim),
+                child: ScaleTransition(scale: anim, child: child),
               ),
               child: Icon(
+                key: ValueKey(_textController.text.trim().isNotEmpty ? 'send' : 'record'),
                 _textController.text.trim().isNotEmpty ? Icons.send : Icons.mic,
                 color: Colors.white,
                 size: 24,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

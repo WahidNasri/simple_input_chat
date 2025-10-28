@@ -8,7 +8,7 @@ enum ChatInputState {
   voiceRecording,
 }
 
-class ChatInputWidget extends StatefulWidget {
+class SimpleChatInput extends StatefulWidget {
   final Function(String)? onTextMessage;
   final Function(String)? onVoiceMessage;
   final VoidCallback? onEmojiPressed;
@@ -17,8 +17,11 @@ class ChatInputWidget extends StatefulWidget {
   final Duration? maxRecordingDuration;
   final Function() onMicUsed;
   final TextEditingController? controller;
+  final Color? fillColor;
+  final String? hint;
+  final EdgeInsets? padding;
 
-  const ChatInputWidget({
+  const SimpleChatInput({
     super.key,
     this.onTextMessage,
     this.onVoiceMessage,
@@ -28,13 +31,16 @@ class ChatInputWidget extends StatefulWidget {
     this.maxRecordingDuration,
     required this.onMicUsed,
     this.controller,
+    this.fillColor,
+    this.hint,
+    this.padding,
   });
 
   @override
-  State<ChatInputWidget> createState() => _ChatInputWidgetState();
+  State<SimpleChatInput> createState() => _SimpleChatInputState();
 }
 
-class _ChatInputWidgetState extends State<ChatInputWidget> {
+class _SimpleChatInputState extends State<SimpleChatInput> {
   ChatInputState _currentState = ChatInputState.textInput;
   final AudioRecordingService _audioService = AudioRecordingService();
 
@@ -85,42 +91,42 @@ class _ChatInputWidgetState extends State<ChatInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Voice recording widget (full screen)
-        if (_currentState == ChatInputState.voiceRecording)
-          VoiceRecordingWidget(
-            onCancel: _handleVoiceCancel,
-            onSend: _handleVoiceSend,
-            onIsMicUsed: (){
-              widget.onMicUsed();
-              _handleVoiceCancel();
-            },
-            maxDuration: widget.maxRecordingDuration,
-            onPlayVoiceError: (error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Playback error: $error')),
-              );
-            },
-          ),
+    return Padding(
+      padding: widget.padding ?? const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Voice recording widget (full screen)
+          if (_currentState == ChatInputState.voiceRecording)
+            VoiceRecordingWidget(
+              onCancel: _handleVoiceCancel,
+              onSend: _handleVoiceSend,
+              onIsMicUsed: (){
+                widget.onMicUsed();
+                _handleVoiceCancel();
+              },
+              maxDuration: widget.maxRecordingDuration,
+              onPlayVoiceError: (error) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Playback error: $error')),
+                );
+              },
+            ),
 
-
-
-        // Text input widget
-        if (_currentState == ChatInputState.textInput)
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextInputWidget(
+          // Text input widget
+          if (_currentState == ChatInputState.textInput)
+            TextInputWidget(
               key: ValueKey("ChatInputState.textInput"),
               controller: widget.controller,
               onSendPressed: _handleSendText,
               onVoicePressed: _handleVoicePressed,
               onAttachmentPressed: _handleAttachmentPressed,
               onCameraPressed: _handleCameraPressed,
+              fillColor: widget.fillColor,
+              hint: widget.hint,
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
