@@ -1,4 +1,6 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:waved_audio_player/waved_audio_player.dart';
 import 'widgets/simple_chat_input.dart';
 
 void main() {
@@ -33,50 +35,47 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
 
   void _handleTextMessage(String message) {
     setState(() {
-      _messages.add(ChatMessage(
-        text: message,
-        isText: true,
-        timestamp: DateTime.now(),
-      ));
+      _messages.add(
+        ChatMessage(text: message, isText: true, timestamp: DateTime.now()),
+      );
     });
   }
 
   void _handleVoiceMessage(String voicePath) {
     setState(() {
-      _messages.add(ChatMessage(
-        text: 'Voice message recorded',
-        isText: false,
-        timestamp: DateTime.now(),
-        voicePath: voicePath,
-      ));
+      _messages.add(
+        ChatMessage(
+          text: 'Voice message recorded',
+          isText: false,
+          timestamp: DateTime.now(),
+          voicePath: voicePath,
+        ),
+      );
     });
   }
 
   void _handleEmojiPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Emoji picker pressed')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Emoji picker pressed')));
   }
 
   void _handleAttachmentPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Attachment pressed')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Attachment pressed')));
   }
 
   void _handleCameraPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Camera pressed')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Camera pressed')));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat Input Demo'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Chat Input Demo'), elevation: 0),
       body: SafeArea(
         child: Column(
           children: [
@@ -91,7 +90,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
                 },
               ),
             ),
-            
+
             // Chat input widget
             SimpleChatInput(
               onTextMessage: _handleTextMessage,
@@ -99,7 +98,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
               onEmojiPressed: _handleEmojiPressed,
               onAttachmentPressed: _handleAttachmentPressed,
               onCameraPressed: _handleCameraPressed,
-              onMicUsed: (){
+              onMicUsed: () {
                 print(">>>>>>>>>>>>> Mic used");
               },
             ),
@@ -127,20 +126,30 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  message.text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                if (message.isText)
+                  Text(
+                    message.text,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  )
+                else
+                  WavedAudioPlayer(
+                    source: DeviceFileSource(message.voicePath!,mimeType: "audio/mp3"),
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    iconBackgoundColor: Theme.of(context).primaryColor,
+                    playedColor: Theme.of(context).primaryColor,
+                    unplayedColor: Colors.grey,
+                    waveHeight: 20,
+                    //waveWidth: 100,
+                    barWidth: 2,
+                    buttonSize: 30,
+                    onError: (error) {
+                      print(error.message);
+                    },
                   ),
-                ),
                 const SizedBox(height: 4),
                 Text(
                   '${message.timestamp.hour.toString().padLeft(2, '0')}:${message.timestamp.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),

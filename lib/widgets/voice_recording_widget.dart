@@ -157,7 +157,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: WavedAudioPlayer(
-                      source: DeviceFileSource(_recordingPath!),
+                      source: DeviceFileSource(_recordingPath! ,mimeType: "audio/mp3"),
                       iconColor: Theme.of(context).colorScheme.onPrimary,
                       iconBackgoundColor: Theme.of(context).primaryColor,
                       playedColor: Theme.of(context).primaryColor,
