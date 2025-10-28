@@ -20,6 +20,8 @@ class SimpleChatInput extends StatefulWidget {
   final Color? fillColor;
   final String? hint;
   final EdgeInsets? padding;
+  final Color? primaryColor;
+  final Color? canCelOrPauseColor;
 
   const SimpleChatInput({
     super.key,
@@ -34,6 +36,8 @@ class SimpleChatInput extends StatefulWidget {
     this.fillColor,
     this.hint,
     this.padding,
+    this.primaryColor,
+    this.canCelOrPauseColor,
   });
 
   @override
@@ -111,6 +115,8 @@ class _SimpleChatInputState extends State<SimpleChatInput> {
                   SnackBar(content: Text('Playback error: $error')),
                 );
               },
+              canCelOrPauseColor: widget.canCelOrPauseColor,
+              primaryColor: widget.primaryColor,
             ),
 
           // Text input widget

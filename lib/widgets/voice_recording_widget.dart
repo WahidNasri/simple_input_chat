@@ -12,6 +12,9 @@ class VoiceRecordingWidget extends StatefulWidget {
   final Function(String)? onPlayVoiceError;
   final Function() onIsMicUsed;
   final Duration? maxDuration;
+  final Color? primaryColor;
+  final Color? canCelOrPauseColor;
+
 
   const VoiceRecordingWidget({
     super.key,
@@ -20,6 +23,7 @@ class VoiceRecordingWidget extends StatefulWidget {
     this.onPlayVoiceError,
     required this.onIsMicUsed,
     this.maxDuration = const Duration(minutes: 1),
+    this.primaryColor, this.canCelOrPauseColor,
   });
 
   @override
@@ -197,7 +201,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                 IconButton(
                   onPressed: widget.onCancel,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
+                    backgroundColor: widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                         10,
@@ -214,7 +218,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                   IconButton(
                     onPressed: _handleStopRecording,
                     style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.error),
+                      backgroundColor: WidgetStatePropertyAll(widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error),
                       shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           10,
