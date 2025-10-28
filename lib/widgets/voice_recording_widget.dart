@@ -204,9 +204,9 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                       ),
                     ),
                   ),
-                  icon: const Icon(
+                  icon:  Icon(
                     Icons.delete_outline,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onError,
                     size: 20,
                   ),
                 ),
@@ -221,7 +221,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                         ),
                       ),
                     ),
-                    icon: Icon(Icons.pause, color: Colors.white, size: 28),
+                    icon: Icon(Icons.pause, color: Theme.of(context).colorScheme.onError, size: 28),
                   ),
                 // Send button
                 GestureDetector(
