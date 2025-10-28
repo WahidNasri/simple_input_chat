@@ -197,7 +197,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                 IconButton(
                   onPressed: widget.onCancel,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Theme.of(context).colorScheme.error,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                         10,
@@ -215,7 +215,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                   IconButton(
                     onPressed: _handleStopRecording,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           10,
@@ -224,7 +224,6 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                     ),
                     icon: Icon(Icons.pause, color: Colors.white, size: 28),
                   ),
-
                 // Send button
                 GestureDetector(
                   onTap: () => widget.onSend(_recordingPath),
