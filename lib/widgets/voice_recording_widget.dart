@@ -15,7 +15,6 @@ class VoiceRecordingWidget extends StatefulWidget {
   final Color? primaryColor;
   final Color? canCelOrPauseColor;
 
-
   const VoiceRecordingWidget({
     super.key,
     required this.onCancel,
@@ -23,7 +22,8 @@ class VoiceRecordingWidget extends StatefulWidget {
     this.onPlayVoiceError,
     required this.onIsMicUsed,
     this.maxDuration = const Duration(minutes: 1),
-    this.primaryColor, this.canCelOrPauseColor,
+    this.primaryColor,
+    this.canCelOrPauseColor,
   });
 
   @override
@@ -198,34 +198,40 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Cancel button
-                IconButton(
-                  onPressed: widget.onCancel,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ),
+                GestureDetector(
+                  onTap: widget.onCancel,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  icon:  Icon(
-                    Icons.delete_outline,
-                    color: Theme.of(context).colorScheme.onError,
-                    size: 20,
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: Theme.of(context).colorScheme.onError,
+                      size: 20,
+                    ),
                   ),
                 ),
                 if (!isRecordingPaused)
-                  IconButton(
-                    onPressed: _handleStopRecording,
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                      )),
+                  GestureDetector(
+                    onTap: _handleStopRecording,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: widget.canCelOrPauseColor ?? Theme.of(context).colorScheme.error,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.pause,
+                        color: Theme.of(context).colorScheme.onError,
+                        size: 28,
+                      ),
                     ),
-                    icon: Icon(Icons.pause, color: Theme.of(context).colorScheme.onError, size: 28),
                   ),
                 // Send button
                 GestureDetector(
