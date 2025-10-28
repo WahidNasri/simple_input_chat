@@ -213,13 +213,13 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                 if (!isRecordingPaused)
                   IconButton(
                     onPressed: _handleStopRecording,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      shape: RoundedRectangleBorder(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.error),
+                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           10,
                         ),
-                      ),
+                      )),
                     ),
                     icon: Icon(Icons.pause, color: Theme.of(context).colorScheme.onError, size: 28),
                   ),
