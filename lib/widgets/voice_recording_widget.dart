@@ -201,7 +201,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                         10,
-                      ), // Set border radius to 0 for a sharp rectangle
+                      ),
                     ),
                   ),
                   icon: const Icon(
@@ -210,7 +210,6 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                     size: 20,
                   ),
                 ),
-                // Pause/Resume/Play button
                 if (!isRecordingPaused)
                   IconButton(
                     onPressed: _handleStopRecording,
@@ -219,7 +218,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           10,
-                        ), // Set border radius to 0 for a sharp rectangle
+                        ),
                       ),
                     ),
                     icon: Icon(Icons.pause, color: Colors.white, size: 28),
