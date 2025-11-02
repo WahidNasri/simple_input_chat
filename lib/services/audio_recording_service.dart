@@ -12,7 +12,7 @@ class AudioRecordingService {
     _recorder = AudioRecorder();
   }
 
-  late AudioRecorder _recorder;
+  AudioRecorder? _recorder;
   Timer? _timer;
   StreamController<List<double>>? _waveformController;
   StreamController<Duration>? _durationController;
@@ -20,6 +20,11 @@ class AudioRecordingService {
   bool _isRecording = false;
   bool _isPaused = false;
   Duration _recordingDuration = Duration.zero;
+
+  AudioRecorder _getRecorder() {
+    _recorder ??= AudioRecorder();
+    return _recorder!;
+  }
 
   // Getters
   bool get isRecording => _isRecording;
@@ -49,7 +54,7 @@ class AudioRecordingService {
       final directory = await getApplicationDocumentsDirectory();
       _currentRecordingPath = '${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
-      await _recorder.start(
+      await _getRecorder().start(
         const RecordConfig(
           encoder: AudioEncoder.aacLc,
           bitRate: 128000,
@@ -76,10 +81,10 @@ class AudioRecordingService {
   }
 
   Future<void> pauseRecording() async {
-    if (!_isRecording || _isPaused) return;
+    if (!_isRecording || _isPaused || _recorder == null) return;
 
     try {
-      await _recorder.pause();
+      await _recorder!.pause();
       _isPaused = true;
       _timer?.cancel();
     } catch (e) {
@@ -88,10 +93,10 @@ class AudioRecordingService {
   }
 
   Future<void> resumeRecording() async {
-    if (!_isRecording || !_isPaused) return;
+    if (!_isRecording || !_isPaused || _recorder == null) return;
 
     try {
-      await _recorder.resume();
+      await _recorder!.resume();
       _isPaused = false;
       _startTimer();
     } catch (e) {
@@ -100,10 +105,10 @@ class AudioRecordingService {
   }
 
   Future<String?> stopRecording() async {
-    if (!_isRecording) return null;
+    if (!_isRecording || _recorder == null) return null;
 
     try {
-      final path = await _recorder.stop();
+      final path = await _recorder!.stop();
       _isRecording = false;
       _isPaused = false;
       _timer?.cancel();
@@ -118,10 +123,20 @@ class AudioRecordingService {
   }
 
   Future<void> cancelRecording() async {
-    if (!_isRecording) return;
+    if (!_isRecording) {
+      // Clean up resources even if not recording
+      _timer?.cancel();
+      _waveformController?.close();
+      _durationController?.close();
+      _isRecording = false;
+      _isPaused = false;
+      return;
+    }
 
     try {
-      await _recorder.cancel();
+      if (_recorder != null) {
+        await _recorder!.cancel();
+      }
       _isRecording = false;
       _isPaused = false;
       _timer?.cancel();
@@ -137,6 +152,12 @@ class AudioRecordingService {
       }
     } catch (e) {
       print('Error canceling recording: $e');
+      // Clean up state even if cancel fails
+      _isRecording = false;
+      _isPaused = false;
+      _timer?.cancel();
+      _waveformController?.close();
+      _durationController?.close();
     }
   }
 
@@ -170,6 +191,22 @@ class AudioRecordingService {
     _timer?.cancel();
     _waveformController?.close();
     _durationController?.close();
-    _recorder.dispose();
+    _recorder?.dispose();
+    _recorder = null;
+  }
+
+  /// Clean up any active recording without disposing the recorder
+  /// This should be called when a widget is disposed but the service
+  /// may be used again by another widget
+  void cleanup() {
+    if (_isRecording) {
+      cancelRecording();
+    } else {
+      _timer?.cancel();
+      _waveformController?.close();
+      _durationController?.close();
+      _isRecording = false;
+      _isPaused = false;
+    }
   }
 }

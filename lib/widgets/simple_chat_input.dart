@@ -50,7 +50,8 @@ class _SimpleChatInputState extends State<SimpleChatInput> {
 
   @override
   void dispose() {
-    _audioService.dispose();
+    // Only cleanup active recordings, don't dispose the singleton service
+    _audioService.cleanup();
     super.dispose();
   }
 
