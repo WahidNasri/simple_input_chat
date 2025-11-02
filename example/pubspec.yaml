@@ -1,0 +1,33 @@
+name: simple_chat_input_example
+description: Example app for simple_chat_input package
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # Simple Chat Input package
+  simple_chat_input:
+    path: ../
+  
+  # Required dependencies (already included in the package)
+  permission_handler: ^12.0.1
+  record: ^6.1.2
+  path_provider: ^2.1.5
+  audioplayers: ^6.5.1
+  waved_audio_player: ^1.3.0
+  mic_info: ^0.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

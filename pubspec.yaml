@@ -1,8 +1,8 @@
 name: simple_chat_input
-description: "A new Flutter project."
+description: A Flutter widget that provides a WhatsApp-like chat input experience with voice recording capabilities, including real-time waveform visualization and audio playback.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'sample_chat_input' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
 version: 1.0.0+1

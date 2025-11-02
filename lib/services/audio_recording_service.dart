@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 class AudioRecordingService {
   static final AudioRecordingService _instance = AudioRecordingService._internal();
   factory AudioRecordingService() => _instance;
-  AudioRecordingService._internal();
+  AudioRecordingService._internal(){
+    _recorder = AudioRecorder();
+  }
 
-  final AudioRecorder _recorder = AudioRecorder();
+  late AudioRecorder _recorder;
   Timer? _timer;
   StreamController<List<double>>? _waveformController;
   StreamController<Duration>? _durationController;
