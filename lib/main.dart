@@ -41,7 +41,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
     });
   }
 
-  void _handleVoiceMessage(String voicePath, Duration duration, int fileSizeBytes) {
+  void _handleVoiceMessage(String voicePath, Duration duration, int fileSizeBytes, List<double>? waveform) {
     setState(() {
       _messages.add(
         ChatMessage(

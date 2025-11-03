@@ -197,10 +197,10 @@ class _MyChatPageState extends State<MyChatPage> {
               // Handle cancel action
               print('Recording cancelled');
             },
-            onSend: (String? recordingPath, Duration? duration, int? fileSizeBytes) {
+            onSend: (String? recordingPath, Duration? duration, int? fileSizeBytes, List<double>? waveform) {
               // Handle send action with extra metadata
               if (recordingPath != null) {
-                print('Voice message: path=$recordingPath, duration=${duration?.inMilliseconds}ms, size=${fileSizeBytes ?? 0} bytes');
+                print('Voice message: path=$recordingPath, duration=${duration?.inMilliseconds}ms, size=${fileSizeBytes ?? 0} bytes, waveform points: ${waveform?.length ?? 0}');
                 // Send the voice message
               }
             },

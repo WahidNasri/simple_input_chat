@@ -8,7 +8,7 @@ import '../services/audio_recording_service.dart';
 
 class VoiceRecordingWidget extends StatefulWidget {
   final VoidCallback onCancel;
-  final Function(String? path, Duration? duration, int? fileSizeBytes) onSend;
+  final Function(String? path, Duration? duration, int? fileSizeBytes, List<double>? waveform) onSend;
   final Function(String)? onPlayVoiceError;
   final Function() onIsMicUsed;
   final Duration? maxDuration;
@@ -234,7 +234,7 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                     ),
                   ),
               // Send button
-                GestureDetector(
+              GestureDetector(
                   onTap: () async {
                     String? pathToSend = _recordingPath;
                     // Ensure recording is stopped to have a finalized file and duration
@@ -255,7 +255,12 @@ class _VoiceRecordingWidgetState extends State<VoiceRecordingWidget> {
                       }
                     }
 
-                    widget.onSend(pathToSend, durationToSend, fileSizeBytes);
+                    // Pass a copy of waveform so outer handlers don't mutate internal state
+                    final List<double>? waveformToSend = _waveformData.isEmpty
+                        ? null
+                        : List<double>.from(_waveformData);
+
+                    widget.onSend(pathToSend, durationToSend, fileSizeBytes, waveformToSend);
                   },
                   child: Container(
                     width: 45,

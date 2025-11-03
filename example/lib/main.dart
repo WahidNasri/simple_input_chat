@@ -44,7 +44,7 @@ class _ChatExamplePageState extends State<ChatExamplePage> {
     );
   }
 
-  void _handleSend(String? recordingPath, Duration? duration, int? fileSizeBytes) {
+  void _handleSend(String? recordingPath, Duration? duration, int? fileSizeBytes, List<double>? waveform) {
     setState(() {
       _isRecording = false;
     });
@@ -61,7 +61,7 @@ class _ChatExamplePageState extends State<ChatExamplePage> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Voice sent: $recordingPath, duration: ${duration?.inMilliseconds ?? 0} ms, size: ${fileSizeBytes ?? 0} bytes'),
+          content: Text('Voice sent: $recordingPath, duration: ${duration?.inMilliseconds ?? 0} ms, size: ${fileSizeBytes ?? 0} bytes, waveform points: ${waveform?.length ?? 0}'),
           backgroundColor: Colors.green,
         ),
       );
