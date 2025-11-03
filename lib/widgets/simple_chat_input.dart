@@ -10,7 +10,7 @@ enum ChatInputState {
 
 class SimpleChatInput extends StatefulWidget {
   final Function(String)? onTextMessage;
-  final Function(String)? onVoiceMessage;
+  final Function(String path, Duration duration, int fileSizeBytes)? onVoiceMessage;
   final VoidCallback? onEmojiPressed;
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onCameraPressed;
@@ -76,10 +76,10 @@ class _SimpleChatInputState extends State<SimpleChatInput> {
     _audioService.cancelRecording();
   }
 
-  void _handleVoiceSend(String? path) async {
+  void _handleVoiceSend(String? path, Duration? duration, int? fileSizeBytes) async {
     final recordingPath = path ?? await _audioService.stopRecording();
-    if (recordingPath != null) {
-      widget.onVoiceMessage?.call(recordingPath);
+    if (recordingPath != null && duration != null && fileSizeBytes != null) {
+      widget.onVoiceMessage?.call(recordingPath, duration, fileSizeBytes);
     }
     setState(() {
       _currentState = ChatInputState.textInput;

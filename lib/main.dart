@@ -41,7 +41,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
     });
   }
 
-  void _handleVoiceMessage(String voicePath) {
+  void _handleVoiceMessage(String voicePath, Duration duration, int fileSizeBytes) {
     setState(() {
       _messages.add(
         ChatMessage(
@@ -49,6 +49,7 @@ class _ChatDemoPageState extends State<ChatDemoPage> {
           isText: false,
           timestamp: DateTime.now(),
           voicePath: voicePath,
+          duration: duration
         ),
       );
     });
@@ -165,11 +166,13 @@ class ChatMessage {
   final bool isText;
   final DateTime timestamp;
   final String? voicePath;
+  final Duration? duration;
 
   ChatMessage({
     required this.text,
     required this.isText,
     required this.timestamp,
     this.voicePath,
+    this.duration,
   });
 }

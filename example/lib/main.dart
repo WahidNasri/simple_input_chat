@@ -44,7 +44,7 @@ class _ChatExamplePageState extends State<ChatExamplePage> {
     );
   }
 
-  void _handleSend(String? recordingPath) {
+  void _handleSend(String? recordingPath, Duration? duration, int? fileSizeBytes) {
     setState(() {
       _isRecording = false;
     });
@@ -61,7 +61,7 @@ class _ChatExamplePageState extends State<ChatExamplePage> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Voice message sent: $recordingPath'),
+          content: Text('Voice sent: $recordingPath, duration: ${duration?.inMilliseconds ?? 0} ms, size: ${fileSizeBytes ?? 0} bytes'),
           backgroundColor: Colors.green,
         ),
       );
