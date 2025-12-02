@@ -10,6 +10,7 @@ class TextInputWidget extends StatefulWidget {
   final VoidCallback onCameraPressed;
   final String? hint;
   final Color? fillColor;
+  final bool enableVoiceRecording;
 
   const TextInputWidget({
     super.key,
@@ -22,6 +23,7 @@ class TextInputWidget extends StatefulWidget {
     required this.onCameraPressed,
     this.hint,
     this.fillColor,
+    this.enableVoiceRecording = true,
   });
 
   @override
@@ -119,12 +121,18 @@ class _TextInputWidgetState extends State<TextInputWidget> {
         ),
         // Send or Voice button
         GestureDetector(
-          onTap: _textController.text.trim().isNotEmpty
-              ? () {
-                  widget.onSendPressed(_textController.text.trim());
-                  _textController.clear();
-                }
-              : widget.onVoicePressed,
+          onTap: () {
+            final text = _textController.text.trim();
+            if (text.isNotEmpty) {
+              widget.onSendPressed(text);
+              _textController.clear();
+              setState(() {});
+              return;
+            }
+            if (widget.enableVoiceRecording) {
+              widget.onVoicePressed();
+            }
+          },
           child: Container(
             width: 48,
             height: 48,
@@ -144,8 +152,14 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 child: ScaleTransition(scale: anim, child: child),
               ),
               child: Icon(
-                key: ValueKey(_textController.text.trim().isNotEmpty ? 'send' : 'record'),
-                _textController.text.trim().isNotEmpty ? Icons.send : Icons.mic,
+                key: ValueKey(
+                  _textController.text.trim().isNotEmpty || !widget.enableVoiceRecording
+                      ? 'send'
+                      : 'record',
+                ),
+                _textController.text.trim().isNotEmpty || !widget.enableVoiceRecording
+                    ? Icons.send
+                    : Icons.mic,
                 color: Colors.white,
                 size: 24,
               ),

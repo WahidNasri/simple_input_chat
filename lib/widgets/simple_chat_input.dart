@@ -22,6 +22,7 @@ class SimpleChatInput extends StatefulWidget {
   final EdgeInsets? padding;
   final Color? primaryColor;
   final Color? canCelOrPauseColor;
+  final bool enableVoiceRecording;
 
   const SimpleChatInput({
     super.key,
@@ -38,6 +39,7 @@ class SimpleChatInput extends StatefulWidget {
     this.padding,
     this.primaryColor,
     this.canCelOrPauseColor,
+    this.enableVoiceRecording = true,
   });
 
   @override
@@ -131,6 +133,7 @@ class _SimpleChatInputState extends State<SimpleChatInput> {
               onCameraPressed: _handleCameraPressed,
               fillColor: widget.fillColor,
               hint: widget.hint,
+              enableVoiceRecording: widget.enableVoiceRecording,
             ),
         ],
       ),
